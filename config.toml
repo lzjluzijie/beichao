@@ -4,7 +4,7 @@ defaultContentLanguage = "zh-cn"
 title = "北朝旧贴|临高启明公开图书馆"
 theme = "lgqm"
 hasCJKLanguage = true
-enableGitInfo = true
+# enableGitInfo = true
 
 [params]
   gitRepo = "https://github.com/lzjluzijie/beichao"
