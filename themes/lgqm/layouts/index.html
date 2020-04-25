@@ -1,0 +1,32 @@
+{{ define "main" -}}
+
+
+<article class="post">
+    <div class="content">
+    {{ .Content }}
+    </div>
+</article>
+
+<h2 class="title is-size-4">以下是已收录的帖子列表，共 {{len .Site.RegularPages}} 篇</h2>
+  <table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>编号</th>
+        <th>标题</th>
+        <th>作者</th>
+        <th>上次修改</th>
+      </tr>
+    </thead>
+    {{ range .Site.Sections.ByParam "aid" }}
+    {{ range .Pages.ByParam "zid" }}
+    <tr>
+      <td>{{ cond (eq (printf "%T" (.Param "zid")) "int") (printf "%04v-%04d" (.Param "aid") (.Param "zid")) (printf "%04v-%07.2f" (.Param "aid") (.Param "zid")) }}</td>
+      <td><a href="{{ .Permalink }}">{{ .Title }}</a></td>
+      <td>{{ .Param "author" }}</td>
+      <td>{{ .Lastmod.Format (.Site.Params.dateFormatToUse | default "2006-01-02") }}</td>
+    </tr>
+    {{- end }}
+    {{- end }}
+</table>
+
+{{- end }}

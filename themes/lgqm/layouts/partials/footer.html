@@ -1,0 +1,41 @@
+<script type="text/javascript">
+	(function() {
+		var burger = document.querySelector('.burger');
+		var nav = document.querySelector('#'+burger.dataset.target);
+
+		burger.addEventListener('click', function(){
+		burger.classList.toggle('is-active');
+		nav.classList.toggle('is-active');
+		});
+	})();
+
+	var size = localStorage.getItem('size');
+	if (size == null) {
+		size = 5
+		localStorage.setItem('size', size);
+	}
+	document.documentElement.className = "is-size-" + size
+	document.getElementById("button-size-dec").addEventListener("click", function(){
+		if (size <= 6) {
+			size++
+			localStorage.setItem('size', size);
+			document.documentElement.className = "is-size-" + size
+		}
+	})
+	document.getElementById("button-size-inc").addEventListener("click", function(){
+		if (size >= 2) {
+			size--
+			localStorage.setItem('size', size);
+			document.documentElement.className = "is-size-" + size
+		}
+	})
+</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-91028451-15"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-91028451-15');
+</script>

@@ -1,0 +1,14 @@
+baseURL = "https://lgqm.halu.lu/"
+languageCode = "zh"
+defaultContentLanguage = "zh-cn"
+title = "北朝旧贴|临高启明公开图书馆"
+theme = "lgqm"
+hasCJKLanguage = true
+enableGitInfo = true
+
+[params]
+  gitRepo = "https://github.com/lzjluzijie/beichao"
+  editURL = "https://github.com/lzjluzijie/beichao/edit/master/hugo/content/"
+
+[frontmatter]
+  lastmod = ["lastmod", ":git"]
