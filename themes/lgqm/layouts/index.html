@@ -3,7 +3,7 @@
 
 <article class="post">
     <div class="content">
-    {{ .Content }}
+    {{ readFile "README.md" | markdownify }}
     </div>
 </article>
 

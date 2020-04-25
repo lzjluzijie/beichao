@@ -16,18 +16,7 @@
 
 </br>
 
-{{ if eq (len .Pages) 1}}
-
-<article class="post">
-    <div class="content">
-    {{ (index .Pages 0).Content }}
-    </div>
-</article>
-
-{{ else }}
-
-<p class="content is-size-4">本卷共收录 {{ len .Pages }} 篇文章</p>
-
+<h2 class="title is-size-4">以下是已收录的帖子列表，共 {{len .Site.RegularPages}} 篇</h2>
 <table class="table is-fullwidth">
   <thead>
     <tr>
@@ -46,7 +35,7 @@
     <td>{{ .Lastmod.Format (.Site.Params.dateFormatToUse | default "2006-01-02") }}</td>
   </tr>
   {{- end }}
+</table>
 
-{{ end }}
 
 {{- end }}
