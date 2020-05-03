@@ -14,6 +14,7 @@ import (
 	"time"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
+	"github.com/JohannesKaufmann/html-to-markdown/plugin"
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -67,6 +68,7 @@ lastmod: {{ .LastPostTime.Format "2006-01-02 15:04:05+07:00"  }}
 ---
 {{ range .Posts }}
 {{ .Username }} 于 {{ .PostTimeString }} 发表了：
+
 {{ .Content }}
 
 ---------
@@ -77,8 +79,18 @@ var tc *template.Template
 var converter *md.Converter
 var client *http.Client
 var wg sync.WaitGroup
+var dc = make(chan string)
 
 func init() {
+	for i := 0; i < 20; i++ {
+		go func() {
+			for {
+				url := <-dc
+				download(url)
+			}
+		}()
+	}
+
 	t, err := template.New("northdy").Parse(Northdy)
 	if err != nil {
 		panic(err)
@@ -87,6 +99,7 @@ func init() {
 	tc = t
 
 	converter = md.NewConverter("", true, nil)
+	converter.Use(plugin.GitHubFlavored())
 	converter.AddRules(
 		md.Rule{
 			Filter: []string{"img"},
@@ -94,20 +107,44 @@ func init() {
 				alt := selec.AttrOr("alt", "")
 				src := selec.AttrOr("file", "")
 
+				if src == "" {
+					src = selec.AttrOr("src", "")
+				}
 				// 可能是表情或者什么奇怪的图片，无视掉
-				if src == "" || strings.HasPrefix(src, "static/image/") || strings.HasPrefix(src, "http://bbs.northdy.com//mobcent//app/data/phiz/default/") {
+				if src == "" || strings.HasPrefix(src, "static/image/") || strings.HasPrefix(src, "http://bbs.northdy.com//mobcent//app/data/phiz/default/") || strings.HasPrefix(src, "http://bbs.cctvdream.com.cn/static/image/") {
 					empty := ""
 					return &empty
-					//src = selec.AttrOr("src", "")
 				}
 
 				// 北朝的图片就下载，否则先无视
 				var text string
-				if strings.HasPrefix(src, "https://bbs.northdy.com/data/attachment/forum/") {
-					//download(src, path.Base(src))
-					text = fmt.Sprintf("![%s](/img/%s)", alt, path.Base(src))
+				if strings.Contains(src, "//bbs.northdy.com/data/attachment/") {
+					dc <- src
+					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+				} else if strings.Contains(src, "//cdn1.northdy.com/data/attachment/") {
+					dc <- strings.Replace(src, "//cdn1.northdy.com/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
+					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+				} else if strings.Contains(src, "//bbs.cctvdream.com.cn/data/attachment/") {
+					dc <- strings.Replace(src, "//bbs.cctvdream.com.cn/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
+					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+				} else if strings.Contains(src, "//cdn1.xbahv.cn/data/attachment/") {
+					dc <- strings.Replace(src, "//cdn1.xbahv.cn/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
+					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+				} else if strings.Contains(src, "//cdn1.oksvip.cn/data/attachment/") {
+					dc <- strings.Replace(src, "//cdn1.oksvip.cn/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
+					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+				} else if strings.Contains(src, "//7xlupq.com1.z0.glb.clouddn.com/data/attachment/") {
+					dc <- strings.Replace(src, "//7xlupq.com1.z0.glb.clouddn.com/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
+					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+				} else if strings.HasPrefix(src, "data/attachment/") {
+					dc <- "https://bbs.northdy.com/" + src
+					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
 				} else {
-					text = fmt.Sprintf("![%s](/img/%s)", alt, src)
+					//fmt.Println(src)
+					if strings.Contains(src, "data/attachment") {
+						//fmt.Println(src)
+					}
+					text = fmt.Sprintf("![%s](%s)", alt, src)
 				}
 				return &text
 			},
@@ -116,7 +153,7 @@ func init() {
 			Filter: []string{"a"},
 			Replacement: func(content string, selec *goquery.Selection, opt *md.Options) *string {
 				// 无视一些没用的东西
-				if content == "下载附件" || content == "保存到相册" {
+				if content == "" || content == "下载附件" || content == "保存到相册" {
 					empty := ""
 					return &empty
 				}
@@ -134,30 +171,31 @@ func init() {
 	client = &http.Client{}
 }
 
-func download(url, filename string) {
+func download(url string) {
+	if strings.HasPrefix(url, "http://") {
+		url = strings.Replace(url, "http://", "https://", 1)
+	}
+	filename := path.Base(url)
 	fmt.Println(url)
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
 
-		resp, err := client.Get(url)
-		if err != nil {
-			fmt.Println(err.Error())
-			return
-		}
+	resp, err := client.Get(url)
+	if err != nil {
+		fmt.Println(err.Error())
+		download(url)
+		return
+	}
 
-		out, err := os.Create(fmt.Sprintf("./output/img/%s", filename))
-		if err != nil {
-			panic(err)
-		}
+	out, err := os.Create(fmt.Sprintf("./output/img/%s", filename))
+	if err != nil {
+		panic(err)
+	}
 
-		_, err = io.Copy(out, resp.Body)
-		// 下载错误，重试
-		if err != nil {
-			fmt.Println(err.Error())
-			download(url, filename)
-		}
-	}()
+	_, err = io.Copy(out, resp.Body)
+	// 下载错误，重试
+	if err != nil {
+		fmt.Println(err.Error())
+		download(url)
+	}
 }
 
 func exec(thread *Thread) {
@@ -166,7 +204,7 @@ func exec(thread *Thread) {
 		panic(err)
 	}
 
-	fmt.Println(thread.Title)
+	//fmt.Println(thread.Title)
 	err = tc.Execute(f, thread)
 
 	if err != nil {
@@ -220,9 +258,9 @@ func jsonl() {
 	c := 0
 	for {
 		c++
-		if c > 50 {
-			break
-		}
+		//if c > 50 {
+		//	break
+		//}
 
 		//ReadLine 有问题
 		l, err := r.ReadString('\n')
@@ -273,6 +311,8 @@ func jsonl() {
 				panic(err)
 			}
 
+			content = strings.ReplaceAll(content, "\n", "\n\n")
+			content = strings.ReplaceAll(content, "\n\n> ", "\n> \n> ")
 			pts.Content = content
 		}
 
