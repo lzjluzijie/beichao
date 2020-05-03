@@ -4,6 +4,8 @@
 
 - [原始数据下载](https://mirrors.tuna.tsinghua.edu.cn/osdn/users/26/26340/%E5%8C%97%E6%9C%9D%E8%AE%BA%E5%9D%9B%E4%B8%B4%E9%AB%98%E7%89%88%E6%89%80%E6%9C%89%E8%B4%B4%E5%AD%90.zip)
 - [数据来源](https://lgqm.gq/thread-1722-1-1.html)
+- QQ群：点击QQ群号加入：[475191301](https://jq.qq.com/?_wv=1027&k=5o3GCYt)
+- telegram 电报群(需要科学上网) https://t.me/lingaoqiming
 
 ---------
 
