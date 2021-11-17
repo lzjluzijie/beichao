@@ -120,25 +120,25 @@ func init() {
 				var text string
 				if strings.Contains(src, "//bbs.northdy.com/data/attachment/") {
 					dc <- src
-					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+					text = fmt.Sprintf("![%s](https://cdn.jsdelivr.net/gh/lzjluzijie/beichao@main/static/img/%s)", alt, path.Base(src))
 				} else if strings.Contains(src, "//cdn1.northdy.com/data/attachment/") {
 					dc <- strings.Replace(src, "//cdn1.northdy.com/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
-					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+					text = fmt.Sprintf("![%s](https://cdn.jsdelivr.net/gh/lzjluzijie/beichao@main/static/img/%s)", alt, path.Base(src))
 				} else if strings.Contains(src, "//bbs.cctvdream.com.cn/data/attachment/") {
 					dc <- strings.Replace(src, "//bbs.cctvdream.com.cn/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
-					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+					text = fmt.Sprintf("![%s](https://cdn.jsdelivr.net/gh/lzjluzijie/beichao@main/static/img/%s)", alt, path.Base(src))
 				} else if strings.Contains(src, "//cdn1.xbahv.cn/data/attachment/") {
 					dc <- strings.Replace(src, "//cdn1.xbahv.cn/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
-					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+					text = fmt.Sprintf("![%s](https://cdn.jsdelivr.net/gh/lzjluzijie/beichao@main/static/img/%s)", alt, path.Base(src))
 				} else if strings.Contains(src, "//cdn1.oksvip.cn/data/attachment/") {
 					dc <- strings.Replace(src, "//cdn1.oksvip.cn/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
-					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+					text = fmt.Sprintf("![%s](https://cdn.jsdelivr.net/gh/lzjluzijie/beichao@main/static/img/%s)", alt, path.Base(src))
 				} else if strings.Contains(src, "//7xlupq.com1.z0.glb.clouddn.com/data/attachment/") {
 					dc <- strings.Replace(src, "//7xlupq.com1.z0.glb.clouddn.com/data/attachment/", "//bbs.northdy.com/data/attachment/", 1)
-					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+					text = fmt.Sprintf("![%s](https://cdn.jsdelivr.net/gh/lzjluzijie/beichao@main/static/img/%s)", alt, path.Base(src))
 				} else if strings.HasPrefix(src, "data/attachment/") {
 					dc <- "https://bbs.northdy.com/" + src
-					text = fmt.Sprintf("![%s](https://mirrors.tuna.tsinghua.edu.cn/osdn/lgqm/72877/%s)", alt, path.Base(src))
+					text = fmt.Sprintf("![%s](https://cdn.jsdelivr.net/gh/lzjluzijie/beichao@main/static/img/%s)", alt, path.Base(src))
 				} else {
 					//fmt.Println(src)
 					if strings.Contains(src, "data/attachment") {
